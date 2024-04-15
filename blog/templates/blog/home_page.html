@@ -15,7 +15,7 @@
                     <p class="card-text">{{ post.description }}.</p>
                     <p class="card-text">{{ post.author }}.</p>
                     <p class="card-text">{{ post.date }}.</p>
-                    <a href="#" class="btn btn-primary">Read More..</a>
+                    <a href="{% url 'detail_post' post.pk %}" class="btn btn-primary">Read More..</a>
                 </div>
             </div><br>
         </div>

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}
+    search
+{% endblock title %}
+{% block content %}
+
+
+    <div class="row mt-5">
+       
+        <div class="col-md-4">
+            <div class="card" style="width: 18rem;">
+                <img src="{{ post.img.url }}" style="height: 200px;width: 300px;" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.description }}.</p>
+                    <p class="card-text">{{ post.author }}.</p>
+                    <p class="card-text">{{ post.date }}.</p>
+                   
+                </div>
+            </div><br>
+        </div>
+       
+    </div>
+<hr>
+
+<div id="comments-container">
+    {% for comment in post.comments.all %}
+        <p>{{comment.text}}</p>
+    {% endfor %}
+</div>
+
+<h1>Add Comment</h1>
+
+<form id="comment-form" action="{% url 'add_comment' post.pk %}" method="post">
+    {% csrf_token %} <!-- Include CSRF token for security -->
+    <div>
+        <label for="id_text">Comment:</label><br>
+        <textarea id="id_text" name="text" rows="4" cols="50"></textarea>
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(document).ready(function() {
+        $('#comment-form').submit(function(e) {
+            e.preventDefault(); // Prevent default form submission
+            
+            var formData = $(this).serialize(); // Serialize form data
+            
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        // If comment added successfully, add the new comment to the page
+                        let newText = $('#id_text').val(); // Get the text of the new comment
+                        $('#comments-container').append('<p>' + newText + '</p>'); // Append the new comment to the comments container
+                        $('#id_text').val(''); // Clear the textarea
+                        // alert('Comment added successfully!');
+                    } else {
+                        // If there are errors, display them
+                        alert('Error adding comment: ' + response.errors);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('An error occurred: ' + error); // Handle errors
+                }
+            });
+        });
+    });
+</script>
+
+
+{% endblock content %}
