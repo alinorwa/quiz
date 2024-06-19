@@ -15,8 +15,10 @@
                     <p class="card-text">{{ post.description }}.</p>
                     <p class="card-text">{{ post.author }}.</p>
                     <p class="card-text">{{ post.date }}.</p>
-                   
+                    <a href="{% url 'update_post' post.pk  %}" class="btn btn-primary">apdate</a>
+                    <a href="{% url 'delete_post' post.pk  %}" class="btn btn-primary">delete</a>
                 </div>
+               
             </div><br>
         </div>
        

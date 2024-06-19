@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}
+    create post
+{% endblock title %}
+{% block content %}
+
+
+    <h1>create posts</h1>
+
+    <form method="post" enctype="multipart/form-data" class="form-control">
+        {% csrf_token %}
+        {{form.as_p}}
+      
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Current Image" style="max-width: 100%; margin-top: 10px;">
+    {% endif %}
+
+        <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+ 
+
+    
+{% endblock content %}

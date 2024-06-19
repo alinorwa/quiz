@@ -1,8 +1,8 @@
-from django.shortcuts import render , get_object_or_404
+from django.shortcuts import render , get_object_or_404 ,redirect
 from django.http import JsonResponse
 from django.db.models import Q
 from .models import Post
-from .forms import CommentForm
+from .forms import CommentForm , PostForm
 # Create your views here.
 
 def home_page(request):
@@ -29,5 +29,42 @@ def add_comment(request, post_id):
             comment.post = post
             comment.author = request.user
             comment.save()
-            return JsonResponse({'success': True})  # Send JSON response indicating success
+            return JsonResponse({'success': True})  
     return JsonResponse({'success': False, 'errors': form.errors})
+
+
+# create post
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user  
+            post.save()
+            return redirect('home_Page')
+    else:
+        form = PostForm()
+    return render(request, 'blog/create_post.html', {'form': form})
+
+
+# apdate post 
+
+def update_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('detail_post', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'blog/update_post.html', {'form': form, 'post': post})
+
+
+# delete post 
+def delete_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('home_Page')
+    return render(request, 'blog/delete_post.html', {'post': post})
